@@ -30,8 +30,10 @@ public class RpgGame {
         // gamer.removeEquipment("短剑");
         // gamer.removeEquipment("布甲");
 
-        gamer.showPlayerStatus();
+        // 使用药水
+        gamer.usePotions();
 
+        gamer.showPlayerStatus();
         // gamer.attack(slime);
         // slime.attack(gamer);
 
