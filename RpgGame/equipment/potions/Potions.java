@@ -15,6 +15,7 @@ public abstract class Potions extends Equipment {
         return potionsPower;
     }
 
+    @Override
     // 抽象出来，交给子类去实现，具体的药水效果是啥
     public abstract EquipmentAttributes getStatus();
 

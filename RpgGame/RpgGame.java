@@ -23,12 +23,16 @@ public class RpgGame {
         Enemy goblin = new Enemy("哥布林", 50, 0, 10, 0);
         gamer.showPlayerStatus();
 
-        // 使用药水
-        gamer.usePotions();
+        // 添加药水
+        gamer.addEquipment(AttackPotions);
+        gamer.addEquipment(HpPotions);
 
-        gamer.showPlayerStatus();
+        // 添加装备
         // gamer.addEquipment(greatSword);
         // gamer.addEquipment(clothArmor);
+
+        // 使用药水
+        gamer.usePotions();
         // gamer.removeEquipment("短剑");
         // gamer.removeEquipment("布甲");
 
