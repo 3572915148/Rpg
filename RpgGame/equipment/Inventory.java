@@ -8,7 +8,7 @@ public class Inventory {
     // 创建一个Inventory类，用于管理玩家的装备栏。
     // 装备栏可以存储不同类型的装备（如武器、防具、药水等）。
     public HashMap<String, Equipment> inventoryBloc;
-    public int maxSize;
+    public Integer maxSize;
 
     public Inventory() {
         this.inventoryBloc = new HashMap<>();

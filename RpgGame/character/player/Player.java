@@ -4,6 +4,11 @@ import RpgGame.equipment.Equipment;
 import RpgGame.equipment.Inventory;
 import RpgGame.equipment.EquipmentAttributes;
 import RpgGame.equipment.potions.Potions;
+
+import java.util.HashMap;
+import java.util.Scanner;
+import RpgGame.equipment.EquipmentAttributes;
+
 import RpgGame.character.Character;
 import RpgGame.character.enemy.Enemy;
 import RpgGame.interfaces.Fight_I;
@@ -12,7 +17,7 @@ public class Player extends Character implements Fight_I<Character> {
     // 创建一个Player类，包含玩家的基本属性（如生命值、法力值、攻击力、防御力等）
     public Inventory inventory;
 
-    public Player(String name, int hp, int blue, int attack, int defense) {
+    public Player(String name, Integer hp, Integer blue, Integer attack, Integer defense) {
         super(name, hp, blue, attack, defense);
         this.inventory = new Inventory();
     }
@@ -28,40 +33,81 @@ public class Player extends Character implements Fight_I<Character> {
     }
 
     // 使用各种药水添加对应的属性
-    public void addPotions(Equipment potions) {
-        if (potions instanceof Potions) {
-            EquipmentAttributes potions1 = inventory.addEquipment(potions);
-            this.applyequipmentAttributes(potions1, false);
-        } else {
-            System.out.println("使用失败");
+    public void usePotions() {
+        System.out.println("背包中有以下药水:");
+
+        Integer counter = 1;
+        HashMap<Integer, Potions> choiceMap = new HashMap<Integer, Potions>();
+
+        // 获取可选择的药水，并且添加到键值对中，方便后续选择数字使用它
+        for (Equipment equipment : inventory.inventoryBloc.values()) {
+            if (equipment instanceof Potions) {
+                // java不知道equipment这个装备具体是啥类型
+                // 因为value是Potions类型，所以这里需要强制转换
+                choiceMap.put(counter, (Potions) equipment);
+                // 将选项加1
+                counter++;
+            }
         }
+        // 显示可以选择的药水菜单
+        for (Integer key : choiceMap.keySet()) {
+            // 输出键值对, 注意因为重写了toString方法，所以但是这里需要获取名字，使用得使用getName方法
+            System.out.println(key + ": " + choiceMap.get(key).getName() + "->" + choiceMap.get(key));
+        }
+        System.out.println("请输入数字选择药水-> : ");
+        // 因为键盘操作是一个io（输入输出）操作，在java中所有的io操作都要使用异常处理，所以这里要用try
+        try (Scanner scanner = new Scanner(System.in)) {
+            Integer choice = scanner.nextInt();
+            // 判断输入是否合法
+            if (choice > 0 && choice <= inventory.inventoryBloc.size()) {
+                // 根据输入的数字，匹配对应的药水
+                Equipment equipment = choiceMap.get(choice);
+                // 获取药水会影响玩家的状态
+                EquipmentAttributes status = equipment.getStatus();
+                // 用完之后就把这个药水移除装备栏
+                inventory.removeWepons(equipment.getName());
+                // 将药水效果作用至玩家身上
+                this.applyEquipmentAttributes(status, false);
+                System.out.println("使用" + equipment.getName() + "成功！");
+                // 使用完后这里直接return，就会退出使用药水菜单
+                return;
+            }
+        }
+        System.out.println("输入有误，请重新输入！");
+        usePotions();
     }
 
     // 增加装备属性
     public void addEquipment(Equipment equipment) {
-        EquipmentAttributes status = inventory.addEquipment(equipment);
-        this.applyequipmentAttributes(status, false);
+        // 因为有药水这种特殊装备，所以在这里添加了装备之后不要直接将属性作用到玩家身上
+        // 当为药水这种装备的话，就只添加到装备栏里，而不作用属性
+        if (equipment instanceof Potions) {
+            inventory.addEquipment(equipment);
+        } else {
+            EquipmentAttributes status = inventory.addEquipment(equipment);
+            this.applyEquipmentAttributes(status, false);
+        }
     }
 
     // 删除装备属性
     public void removeEquipment(String equipmentName) {
         EquipmentAttributes status = inventory.removeWepons(equipmentName);
-        this.applyequipmentAttributes(status, true);
+        this.applyEquipmentAttributes(status, true);
     }
 
-    public void applyequipmentAttributes(EquipmentAttributes status, boolean isRemoved) {
+    public void applyEquipmentAttributes(EquipmentAttributes status, boolean isRemoved) {
         if (isRemoved) {
             // 将装备状态从玩家身上移除
-            this.attack -= status.attackPower;
-            this.defense -= status.defensePower;
-            this.hp -= status.potionsPower;
+            this.attack -= status.attack;
+            this.defense -= status.defense;
+            this.hp -= status.hp;
             return;
         }
 
         // 将装备状态作用至玩家身上
-        this.attack += status.attackPower;
-        this.defense += status.defensePower;
-        this.hp += status.potionsPower;
+        this.attack += status.attack;
+        this.defense += status.defense;
+        this.hp += status.hp;
     }
 
     @Override

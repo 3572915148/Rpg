@@ -1,8 +1,5 @@
 package RpgGame.equipment;
 
-/**
- * Equipment
- */
 public abstract class Equipment {
     private String name;
 

@@ -1,9 +1,9 @@
 package RpgGame.equipment;
 
 public class Defense extends Equipment {
-    public int defensePower;
+    public Integer defensePower;
 
-    public Defense(String name, int defensePower) {
+    public Defense(String name, Integer defensePower) {
         super(name);
         this.defensePower = defensePower;
     }
