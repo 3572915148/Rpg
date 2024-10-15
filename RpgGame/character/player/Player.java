@@ -76,7 +76,6 @@ public class Player extends Character implements Fight_I<Character> {
                 // 使用完后这里直接return，就会退出使用药水菜单
                 return;
             }
-
             System.out.println("输入有误，请重新输入！");
             usePotions();
         }
