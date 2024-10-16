@@ -14,5 +14,6 @@ public abstract class Character {
         this.attack = attack;
         this.defense = defense;
     }
-
+    
+    public Character() {}
 }

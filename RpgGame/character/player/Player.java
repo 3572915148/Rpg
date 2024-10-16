@@ -6,11 +6,14 @@ import RpgGame.equipment.potions.Potions;
 import RpgGame.equipment.EquipmentAttributes;
 
 import java.util.HashMap;
+import java.util.InputMismatchException;
+import java.util.Optional;
 import java.util.Scanner;
 
 import RpgGame.character.Character;
 import RpgGame.character.enemy.Enemy;
 import RpgGame.interfaces.Fight_I;
+import RpgGame.ui.Select;
 
 public class Player extends Character implements Fight_I<Character> {
     // 创建一个Player类，包含玩家的基本属性（如生命值、法力值、攻击力、防御力等）
@@ -21,6 +24,7 @@ public class Player extends Character implements Fight_I<Character> {
         this.inventory = new Inventory();
     }
 
+    // 展示玩家数据面板
     public void showPlayerStatus() {
         System.out.println("****************************************");
         System.out.println("Name: " + this.name);
@@ -33,8 +37,6 @@ public class Player extends Character implements Fight_I<Character> {
 
     // 使用各种药水添加对应的属性
     public void usePotions() {
-        System.out.println("背包中有以下药水:");
-
         Integer counter = 1;
         HashMap<Integer, Potions> choiceMap = new HashMap<Integer, Potions>();
 
@@ -50,17 +52,22 @@ public class Player extends Character implements Fight_I<Character> {
             }
         }
 
+        if (choiceMap.size() <= 0) {
+            System.out.println("背包中没有药水，无法使用！");
+        }
+
+        System.out.println("背包中有以下药水:");
         // 显示可以选择的药水菜单
         for (Integer key : choiceMap.keySet()) {
             // 输出键值对, 注意因为重写了toString方法，所以但是这里需要获取名字，使用得使用getName方法
             System.out.println(key + ": " + choiceMap.get(key).getName() + "->" + choiceMap.get(key));
         }
-        
+
         System.out.println("请输入数字选择药水-> : ");
 
         // 因为键盘操作是一个io（输入输出）操作，在java中所有的io操作都要使用异常处理，所以这里要用try
-        try (Scanner scanner = new Scanner(System.in)) {
-            Integer choice = scanner.nextInt();
+        try {
+            Integer choice = Select.scanner.nextInt();
             // 判断输入是否合法
             if (choice > 0 && choice <= inventory.inventoryBloc.size()) {
                 // 根据输入的数字，匹配对应的药水
@@ -79,12 +86,15 @@ public class Player extends Character implements Fight_I<Character> {
                 // 使用完后这里直接return，就会退出使用药水菜单
                 return;
             }
+        } catch (InputMismatchException e) {
+            System.out.println("输入的内容不是有效的数字，请重新输入!");
+            Select.scanner.next(); // 清除无效输入
+
+            usePotions();
         }
-        System.out.println("输入有误，请重新输入！");
-        usePotions();
     }
 
-    // 增加装备属性
+    // 增加装备
     public void addEquipment(Equipment equipment) {
         // 因为有药水这种特殊装备，所以在这里添加了装备之后不要直接将属性作用到玩家身上
         // 当为药水这种装备的话，就只添加到装备栏里，而不作用属性
@@ -96,12 +106,13 @@ public class Player extends Character implements Fight_I<Character> {
         }
     }
 
-    // 删除装备属性
+    // 删除装备
     public void removeEquipment(String equipmentName) {
         EquipmentAttributes status = inventory.removeWepons(equipmentName);
         this.applyEquipmentAttributes(status, true);
     }
 
+    // 应用装备属性至玩家身上
     public void applyEquipmentAttributes(EquipmentAttributes status, boolean isRemoved) {
         if (isRemoved) {
             // 将装备状态从玩家身上移除
@@ -122,7 +133,7 @@ public class Player extends Character implements Fight_I<Character> {
         // TODO 后续可能有攻击暴击逻辑，可以在这里实现
         if (hurtCharacter instanceof Enemy) {
             Enemy enemy = (Enemy) hurtCharacter;
-            System.out.println("敌人" + this.name + "攻击了" + enemy.name);
+            System.out.println("玩家" + this.name + "攻击了" + enemy.name);
             enemy.getHurt(this.attack);
         } else {
             System.out.println(this.name + "不能攻击" + hurtCharacter);

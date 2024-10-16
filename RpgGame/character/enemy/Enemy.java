@@ -15,7 +15,7 @@ public class Enemy extends Character implements Fight_I<Character> {
     public void attack(Fight_I<Character> hurtCharacter) {
         if (hurtCharacter instanceof Player) {
             Player player = (Player) hurtCharacter;
-            System.out.println("玩家" + this.name + "攻击了" + player.name);
+            System.out.println("敌人" + this.name + "攻击了" + player.name);
             player.getHurt(this.attack);
         } else {
             System.out.println(this.name + "不能攻击" + hurtCharacter);
