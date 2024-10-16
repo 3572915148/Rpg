@@ -6,7 +6,6 @@ import RpgGame.equipment.potions.HpPotions;
 import RpgGame.manager.CharacterManager;
 import RpgGame.ui.Select;
 
-import java.nio.file.OpenOption;
 import java.util.Optional;
 
 import RpgGame.character.enemy.Enemy;
@@ -50,8 +49,6 @@ public class RpgGame {
         gamer.usePotions();
 
         gamer.showPlayerStatus();
-
-        ;
 
         Optional<Character> hurtCharacterOP = Select.selectCharacter(CharacterType.Enemy);
         if (hurtCharacterOP.isEmpty()) {

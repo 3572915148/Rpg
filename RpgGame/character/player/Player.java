@@ -7,8 +7,6 @@ import RpgGame.equipment.EquipmentAttributes;
 
 import java.util.HashMap;
 import java.util.InputMismatchException;
-import java.util.Optional;
-import java.util.Scanner;
 
 import RpgGame.character.Character;
 import RpgGame.character.enemy.Enemy;
